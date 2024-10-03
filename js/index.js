@@ -1,56 +1,97 @@
-// fetch and show categories
-const loadCategories = () => {
+// fetch categories
+const getCategories = () => {
   fetch("https://openapi.programming-hero.com/api/phero-tube/categories")
     .then((response) => response.json())
     .then((data) => displayCategories(data.categories))
     .catch((error) => console.error(error));
 };
 
+// show categories
 const displayCategories = (categories) => {
   const categoriesContainer = document.getElementById("categories-container");
+
+  const buttonAll = document.createElement("button");
+  buttonAll.classList.add(
+    "bg-gray-300",
+    "px-3",
+    "py-1",
+    "rounded-md",
+    "btn-category"
+  );
+  buttonAll.innerText = "All";
+  buttonAll.onclick = () => {
+    removeBgColor();
+    buttonAll.classList.add("bg-red-600", "text-white");
+    getVideos();
+  };
+
+  categoriesContainer.append(buttonAll);
+
   for (const item of categories) {
     const button = document.createElement("button");
-    button.classList.add("bg-gray-300", "px-3", "py-1", "rounded-md");
+    button.classList.add(
+      "bg-gray-300",
+      "px-3",
+      "py-1",
+      "rounded-md",
+      "btn-category"
+    );
     button.innerText = item.category;
+    button.onclick = () => {
+      removeBgColor();
+      button.classList.add("bg-red-600", "text-white");
+      getCategoryVideos(item.category_id);
+    };
     categoriesContainer.append(button);
   }
 };
 
-loadCategories();
+function removeBgColor() {
+  const buttons = document.getElementsByClassName("btn-category");
+  for (const button of buttons) {
+    button.classList.remove("bg-red-600", "text-white");
+  }
+}
 
-// fetch and show videos
-const loadVideos = () => {
+// fetch videos
+const getVideos = () => {
   fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
     .then((response) => response.json())
     .then((data) => displayVideos(data.videos))
     .catch((error) => console.error(error));
 };
-// {
-//     "category_id": "1001",
-//     "video_id": "aaaa",
-//     "thumbnail": "https://i.ibb.co/L1b6xSq/shape.jpg",
-//     "title": "Shape of You",
-//     "authors": [
-//         {
-//             "profile_picture": "https://i.ibb.co/D9wWRM6/olivia.jpg",
-//             "profile_name": "Olivia Mitchell",
-//             "verified": ""
-//         }
-//     ],
-//     "others": {
-//         "views": "100K",
-//         "posted_date": "16278"
-//     },
-//     "description": "Dive into the rhythm of 'Shape of You,' a captivating track that blends pop sensibilities with vibrant beats. Created by Olivia Mitchell, this song has already gained 100K views since its release. With its infectious melody and heartfelt lyrics, 'Shape of You' is perfect for fans looking for an uplifting musical experience. Let the music take over as Olivia's vocal prowess and unique style create a memorable listening journey."
-// }
+
+// show videos
 const displayVideos = (videos) => {
   const videosContainer = document.getElementById("videos-container");
+  videosContainer.innerHTML = "";
+
+  if (videos.length === 0) {
+    videosContainer.innerHTML = `
+        <div class="md:col-span-2 lg:col-span-4 h-96 flex flex-col justify-center items-center">
+            <figure class="mb-5">
+                <img src="./assets/no-content.png"/>    
+            </figure>
+            <p class="tex-3xl font-bold">
+                Oops!! Sorry, There is no content here
+            </p>
+        </div>`;
+    return;
+  }
+
   videos.forEach((item) => {
     const div = document.createElement("div");
     div.innerHTML = `
-        <figure class="mb-3">
+        <figure class="mb-3 relative">
             <img src="${item.thumbnail}" 
             class="rounded-xl w-full h-48 object-cover object-center"/>
+            ${
+              item.others.posted_date?.length === 0
+                ? ""
+                : `<span class="absolute bg-black text-white p-1 rounded right-2 bottom-2 text-xs">
+                ${item.others.posted_date}
+                </span>`
+            }
         </figure>
         <div class="flex gap-2">
             <figure>
@@ -61,12 +102,29 @@ const displayVideos = (videos) => {
                 <h3 class="font-semibold">
                     ${item.title}
                 </h3>
-                <p class="text-xs">${item.authors[0].profile_name}</p>
-                <p class="text-xs">${item.others.views}</p>
+                <p class="text-xs">
+                    ${item.authors[0].profile_name}
+                    ${
+                      item.authors[0].verified
+                        ? `<img src="./assets/verified.png" id="verified" class="inline w-4"/>`
+                        : ""
+                    }
+                </p>
+                <p class="text-xs">${item.others.views} views</p>
             </div>
         </div>`;
     videosContainer.append(div);
   });
 };
 
-loadVideos();
+// fetch category videos
+const getCategoryVideos = (id) => {
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then((response) => response.json())
+    .then((data) => displayVideos(data.category))
+    .catch((error) => console.error(error));
+};
+
+// calling fetch functions
+getCategories();
+getVideos();
