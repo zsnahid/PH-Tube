@@ -44,12 +44,12 @@
   </head>
   <body class="font-inter w-11/12 max-w-screen-2xl mx-auto">
     <header>
-      <nav class="flex justify-between items-center py-4 border-b">
+      <nav class="grid grid-cols-3 items-center py-5 border-b">
         <div class="flex items-center">
           <figure>
-            <img src="./assets/logo.png" alt="logo of ph tube" class="w-9" />
+            <img src="./assets/logo.png" alt="logo of ph tube" class="w-7" />
           </figure>
-          <h1 class="font-bold text-3xl">
+          <h1 class="font-bold lg:text-2xl">
             <span class="text-red-500">PH</span>
             Tube
           </h1>
@@ -71,12 +71,29 @@
             </svg>
           </label>
         </div>
-        <div>
+        <div class="justify-self-end">
           <button class="btn bg-red-500 text-white">Sort</button>
         </div>
       </nav>
     </header>
-    <main></main>
+    <main>
+      <!-- show categories -->
+      <section>
+        <div
+          id="categories-container"
+          class="flex items-center justify-center flex-wrap gap-4 py-5"
+        >
+          <button class="bg-gray-300 px-3 py-1 rounded-md">All</button>
+        </div>
+      </section>
+      <!-- show all videos -->
+      <section>
+        <div
+          id="videos-container"
+          class="grid md:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-10 mb-5"
+        ></div>
+      </section>
+    </main>
     <footer></footer>
     <script src="./js/index.js"></script>
   </body>
