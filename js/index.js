@@ -54,8 +54,10 @@ function removeBgColor() {
 }
 
 // fetch videos
-const getVideos = () => {
-  fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+const getVideos = (searchInput = "") => {
+  fetch(
+    `https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchInput}`
+  )
     .then((response) => response.json())
     .then((data) => displayVideos(data.videos))
     .catch((error) => console.error(error));
@@ -117,7 +119,7 @@ const displayVideos = (videos) => {
               <div class="dropdown dropdown-end">
               <div tabindex="0" role="button" 
                 onclick="getVideoDescription('${item.video_id}')"
-                class="btn btn-outline btn-xs active:bg-black active:text-white"
+                class="btn btn-outline btn-xs"
               >
                 Details
               </div>
@@ -149,9 +151,13 @@ const getVideoDescription = (videoId) => {
 };
 
 const displayDescription = (description, elementId) => {
-  const element = document.getElementById(elementId)
+  const element = document.getElementById(elementId);
   element.innerText = description;
 };
+
+document.getElementById("search-input").addEventListener("keyup", (event) => {
+  getVideos(event.target.value);
+});
 
 // calling fetch functions
 getCategories();
