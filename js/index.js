@@ -94,24 +94,40 @@ const displayVideos = (videos) => {
             }
         </figure>
         <div class="flex gap-2">
-            <figure>
-                <img src="${item.authors[0].profile_picture}" 
-                class="w-8 h-8 object-cover object-center rounded-full"/>
-            </figure>
+          <figure>
+            <img src="${item.authors[0].profile_picture}" 
+              class="w-8 h-8 object-cover object-center rounded-full"/>
+          </figure>
+          <div class="flex justify-between w-full">    
             <div>
-                <h3 class="font-semibold">
-                    ${item.title}
-                </h3>
-                <p class="text-xs">
-                    ${item.authors[0].profile_name}
-                    ${
-                      item.authors[0].verified
-                        ? `<img src="./assets/verified.png" id="verified" class="inline w-4"/>`
-                        : ""
-                    }
-                </p>
-                <p class="text-xs">${item.others.views} views</p>
+              <h3 class="font-semibold">
+                ${item.title}
+              </h3>
+              <p class="text-xs">
+                ${item.authors[0].profile_name}
+                ${
+                  item.authors[0].verified
+                    ? `<img src="./assets/verified.png" id="verified" class="inline w-4"/>`
+                    : ""
+                }
+              </p>
+              <p class="text-xs">${item.others.views} views</p>
+            </div>       
+            <div>
+              <div class="dropdown dropdown-end">
+              <div tabindex="0" role="button" 
+                onclick="getVideoDescription('${item.video_id}')"
+                class="btn btn-outline btn-xs active:bg-black active:text-white"
+              >
+                Details
+              </div>
+              <div tabindex="0" id="${item.video_id}"
+                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-72 p-2 shadow text-xs"
+              >
+              </div>
+              </div>
             </div>
+          </div>
         </div>`;
     videosContainer.append(div);
   });
@@ -123,6 +139,18 @@ const getCategoryVideos = (id) => {
     .then((response) => response.json())
     .then((data) => displayVideos(data.category))
     .catch((error) => console.error(error));
+};
+
+const getVideoDescription = (videoId) => {
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`)
+    .then((response) => response.json())
+    .then((data) => displayDescription(data.video.description, videoId))
+    .catch((error) => console.error(error));
+};
+
+const displayDescription = (description, elementId) => {
+  const element = document.getElementById(elementId)
+  element.innerText = description;
 };
 
 // calling fetch functions
